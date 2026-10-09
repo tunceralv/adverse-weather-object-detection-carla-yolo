@@ -5,6 +5,8 @@ import pygame
 from pygame.locals import*
 from Carla_Baglanti import carla_baglanti
 
+
+
 def vehicle_spawn(world,spawn_point):
 
     blueprint_library=world.get_blueprint_library()
@@ -19,34 +21,23 @@ def vehicle_spawn(world,spawn_point):
 
     return vehicle
     
-def manuel_surus(vehicle,clock):
+def manuel_surus(vehicle,keys,reverse):
 
-    running=True
-    reverse=False
-    gear=1
+        velocity=vehicle.get_velocity()
 
-    while running:
-        for event in pygame.event.get():
-            if event.type==pygame.QUIT:
-                running=False
-            if event.type==pygame.KEYDOWN:
-                if event.key==K_ESCAPE:
-                    running=False
-                if event.key==K_r:
-                    gear=-gear
-                    reverse=gear==-1
-                    if gear==-1:
-                        reverse=True
-                    else:
-                        reverse=False
+        speed=3.6*(velocity.x**2 + velocity.y**2 + velocity.z**2)** 0.5
 
-        keys=pygame.key.get_pressed()
+        MAX_SPEED=20
+
         throttle=0.0
         brake=0.0
         steer=0.0
            
         if keys[K_UP]:
-                throttle=1.0
+            if speed < MAX_SPEED:
+             throttle = 1.0
+            elif speed > MAX_SPEED + 2:
+             brake = 0.2
         if keys[K_DOWN]:
                 brake=1.0
         if keys[K_LEFT]:
@@ -62,4 +53,4 @@ def manuel_surus(vehicle,clock):
             )
 
         vehicle.apply_control(control)
-        clock.tick(60)  
+         
